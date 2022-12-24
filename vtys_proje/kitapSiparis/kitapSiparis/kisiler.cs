@@ -31,7 +31,7 @@ namespace kitapSiparis
         private void kisiler_Load(object sender, EventArgs e)
         {
             baglanti.Open();
-            string sorgu = "select * from view_kisi order by kisi_id ASC";
+            string sorgu = "select * from view_kisi order by id ASC";
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(sorgu, baglanti);
             DataSet ds = new DataSet();
             da.Fill(ds);
@@ -63,7 +63,7 @@ namespace kitapSiparis
             if (K_Adi.Text == String.Empty && K_Id.Text!=string.Empty)
             {
                 baglanti.Open();
-                string komut5 = "select * from view_kisi where kisi_id= " + int.Parse(K_Id.Text) ;
+                string komut5 = "select * from view_kisi where id= " + int.Parse(K_Id.Text) ;
                 NpgsqlDataAdapter da = new NpgsqlDataAdapter(komut5, baglanti);
                 DataSet ds = new DataSet();
                 da.Fill(ds);
@@ -73,7 +73,7 @@ namespace kitapSiparis
             else if (K_Id.Text==string.Empty && K_Adi.Text!=string.Empty) {
                 baglanti.Open();
                 K_Adi.CharacterCasing = CharacterCasing.Lower;
-                string komut6 = "select * from view_kisi where kisi_ad like '%" + K_Adi.Text + "%'";
+                string komut6 = "select * from view_kisi where ad like '%" + K_Adi.Text + "%'";
                 NpgsqlDataAdapter da2 = new NpgsqlDataAdapter(komut6, baglanti);
                 DataSet ds2 = new DataSet();
                 da2.Fill(ds2);

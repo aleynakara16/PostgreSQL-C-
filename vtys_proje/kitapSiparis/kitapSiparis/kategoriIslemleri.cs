@@ -114,16 +114,14 @@ namespace kitapSiparis
             }
         }
 
-        private void guncelle_Click(object sender, EventArgs e)
-        {
-
-        }
-
+ 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
             personelAnasayfa aa = new personelAnasayfa();
             this.Close();
             aa.Show();
         }
+
+ 
     }
 }

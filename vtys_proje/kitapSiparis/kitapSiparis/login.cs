@@ -17,6 +17,10 @@ namespace kitapSiparis
         {
             InitializeComponent();
         }
+        private void login_Load(object sender, EventArgs e)
+        {
+
+        }
         NpgsqlConnection baglanti = new NpgsqlConnection("server=localHost; port=5432; Database=vtysodev ;user ID=postgres ; password=0609");
 
         private void btnGiris_Click(object sender, EventArgs e)
@@ -31,7 +35,7 @@ namespace kitapSiparis
                 bool blnfound = false;
 
                 baglanti.Open();
-                NpgsqlCommand cmd = new NpgsqlCommand("Select * from kisi where kisi_id= '" + txbId.Text + "' and sifre = '" + txbSifre.Text + "'", baglanti);
+                NpgsqlCommand cmd = new NpgsqlCommand("Select * from kullanıcı where id= '" + txbId.Text + "' and sifre = '" + txbSifre.Text + "'", baglanti);
                 NpgsqlDataReader dr = cmd.ExecuteReader();
                 string kisi = string.Empty;
 
@@ -41,16 +45,18 @@ namespace kitapSiparis
                     kisi = dr["kisi_tur"].ToString();
                     if (kisi == "musteri")
                     {
-                        musteriAnasayfa musteriAnasayfa = new musteriAnasayfa();
-                        musteriAnasayfa.Show();
+                        siparişOlustur siparis=new siparişOlustur();
+                        siparis.musteriID = txbId.Text;
+                        siparis.Show();
                         this.Hide();
                     }
-                    else
+                    else if (kisi == "personel")
                     {
                         personelAnasayfa personel = new personelAnasayfa();
                         personel.Show();
                         this.Hide();
                     }
+                    else { }
                 }
                  if (blnfound == false) 
                 {

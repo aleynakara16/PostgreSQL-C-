@@ -20,23 +20,39 @@ namespace kitapSiparis
             InitializeComponent();
         }
 
-
+        public string musteriID;
         private void siparişOlustur_Load(object sender, EventArgs e)
         {
-            string sorgu = "select * from view_urunler order by kitap_id ASC";
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(sorgu, baglanti);
-            DataSet ds = new DataSet();
-            da.Fill(ds);
-            dataGridView1.DataSource = ds.Tables[0];
+            M_Tc.Text = musteriID;
 
-            baglanti.Open();
-            NpgsqlDataAdapter da2 = new NpgsqlDataAdapter("select * from kargo  order by firma_id ASC", baglanti);
-            DataTable dt2 = new DataTable();
-            da2.Fill(dt2);
-            comboBox1.DisplayMember = "firma_ad"; // bize gözükecek olan
-            comboBox1.ValueMember = "firma_id"; // arka kısımda çalışan
-            comboBox1.DataSource = dt2;
-            baglanti.Close();
+            // kitap seçmesi için ürünler eklendi
+            {
+                string sorgu = "select * from view_urunler order by kitap_id ASC";
+                NpgsqlDataAdapter da = new NpgsqlDataAdapter(sorgu, baglanti);
+                DataSet ds = new DataSet();
+                da.Fill(ds);
+                dataGridView1.DataSource = ds.Tables[0];
+            }
+             // kişiye ait siparişler ekrana yazıldı
+            {
+                string sorgu3 = "select * from view_siparis WHERE id =" + M_Tc.Text;
+                NpgsqlDataAdapter da3 = new NpgsqlDataAdapter(sorgu3, baglanti);
+                DataSet ds3 = new DataSet();
+                da3.Fill(ds3);
+                dataGridView2.DataSource = ds3.Tables[0];
+            }
+             // combobox a veriler eklendi
+            {
+                baglanti.Open();
+                NpgsqlDataAdapter da2 = new NpgsqlDataAdapter("select * from kargo  order by firma_id ASC", baglanti);
+                DataTable dt2 = new DataTable();
+                da2.Fill(dt2);
+                comboBox1.DisplayMember = "firma_ad"; // bize gözükecek olan
+                comboBox1.ValueMember = "firma_id"; // arka kısımda çalışan
+                comboBox1.DataSource = dt2;
+                baglanti.Close();
+            }
+           
         }
 
         private void dataGridView1_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
@@ -75,32 +91,42 @@ namespace kitapSiparis
             }
             else
             {
-                Random random = new Random();
-                int siparisNo = random.Next(1, 1000);
+             
+                    baglanti.Open();
+                    NpgsqlCommand komut1 = new NpgsqlCommand("insert into siparis (siparis_id,musteri,kitap,adet,tutar,kargo) values (@p1,@p2,@p3,@p4,@p5,@p6)", baglanti);
+                    komut1.Parameters.AddWithValue("@p1", int.Parse(txbsipaId.Text));
+                    komut1.Parameters.AddWithValue("@p2", int.Parse(M_Tc.Text));
+                    komut1.Parameters.AddWithValue("@p3", int.Parse(K_Id.Text));
+                    komut1.Parameters.AddWithValue("@p4", int.Parse(adet.Text));
+                    komut1.Parameters.AddWithValue("@p6", int.Parse(comboBox1.SelectedValue.ToString()));
 
-                baglanti.Open();
-                NpgsqlCommand komut1 = new NpgsqlCommand("insert into siparis (siparis_id,musteri,kitap,adet,tutar,kargo) values (@p1,@p2,@p3,@p4,@p5,@p6)", baglanti);
-                komut1.Parameters.AddWithValue("@p1", int.Parse(txbsipaId.Text));
-                komut1.Parameters.AddWithValue("@p2", int.Parse(M_Tc.Text));
-                komut1.Parameters.AddWithValue("@p3", int.Parse(K_Id.Text));
-                komut1.Parameters.AddWithValue("@p4", int.Parse(adet.Text));
-                komut1.Parameters.AddWithValue("@p6", int.Parse(comboBox1.SelectedValue.ToString()));
+                    double toplamTutar = (double.Parse(adet.Text)) * (double.Parse(dataGridView1.CurrentRow.Cells[6].Value.ToString()));
+                    tfiyatt.Text = toplamTutar.ToString();
+                    komut1.Parameters.AddWithValue("@p5", double.Parse(tfiyatt.Text));
 
-                double toplamTutar = (double.Parse(adet.Text)) * (double.Parse(dataGridView1.CurrentRow.Cells[6].Value.ToString()));
-                tfiyatt.Text = toplamTutar.ToString();
-                komut1.Parameters.AddWithValue("@p5", double.Parse(tfiyatt.Text));
+                    komut1.ExecuteNonQuery();
+                    baglanti.Close();
+                    MessageBox.Show("SİPARİŞ OLUŞTURULDU", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                komut1.ExecuteNonQuery();
-                baglanti.Close();
-                MessageBox.Show("SİPARİŞ OLUŞTURULDU", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                {
+                    baglanti.Open();
+                    int musteri_id = int.Parse(M_Tc.Text);
+                    string sorgu = "select * from view_siparis WHERE id =" + musteri_id;
+                    NpgsqlDataAdapter da = new NpgsqlDataAdapter(sorgu, baglanti);
+                    DataSet ds = new DataSet();
+                    da.Fill(ds);
+                    dataGridView2.DataSource = ds.Tables[0];
+                    baglanti.Close();
+                }
+                { baglanti.Open();
+                    string sorgu4 = "select * from view_urunler order by kitap_id ASC";
+                    NpgsqlDataAdapter da4 = new NpgsqlDataAdapter(sorgu4, baglanti);
+                    DataSet ds4 = new DataSet();
+                    da4.Fill(ds4);
+                    dataGridView1.DataSource = ds4.Tables[0];
+                    baglanti.Close();
+                }
 
-
-                int musteri_id = int.Parse(M_Tc.Text);
-                string sorgu = "select * from view_siparis WHERE musteri_id ="+musteri_id;
-                NpgsqlDataAdapter da = new NpgsqlDataAdapter(sorgu, baglanti);
-                DataSet ds = new DataSet();
-                da.Fill(ds);
-                dataGridView2.DataSource = ds.Tables[0];
                 { // içlerini temizledik.
                     K_Id.Text = "";
                     K_Adi.Text = "";
@@ -133,9 +159,21 @@ namespace kitapSiparis
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
-            musteriAnasayfa aa = new musteriAnasayfa();
+            login aa = new login();
             this.Close();
             aa.Show();
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+            musteribilgilerim mm = new musteribilgilerim();
+            mm.musteri_id = musteriID;
+            mm.Show();
         }
     }
 }

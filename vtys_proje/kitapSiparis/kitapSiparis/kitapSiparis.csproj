@@ -112,12 +112,6 @@
     <Compile Include="magazaIslem.Designer.cs">
       <DependentUpon>magazaIslem.cs</DependentUpon>
     </Compile>
-    <Compile Include="musteriAnasayfa.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="musteriAnasayfa.Designer.cs">
-      <DependentUpon>musteriAnasayfa.cs</DependentUpon>
-    </Compile>
     <Compile Include="dilIslemleri.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -135,6 +129,12 @@
     </Compile>
     <Compile Include="KitapIslemleri.Designer.cs">
       <DependentUpon>KitapIslemleri.cs</DependentUpon>
+    </Compile>
+    <Compile Include="musteribilgilerim.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="musteribilgilerim.Designer.cs">
+      <DependentUpon>musteribilgilerim.cs</DependentUpon>
     </Compile>
     <Compile Include="personelAnasayfa.cs">
       <SubType>Form</SubType>
@@ -177,9 +177,6 @@
     <EmbeddedResource Include="magazaIslem.resx">
       <DependentUpon>magazaIslem.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="musteriAnasayfa.resx">
-      <DependentUpon>musteriAnasayfa.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="dilIslemleri.resx">
       <DependentUpon>dilIslemleri.cs</DependentUpon>
     </EmbeddedResource>
@@ -188,6 +185,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="KitapIslemleri.resx">
       <DependentUpon>KitapIslemleri.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="musteribilgilerim.resx">
+      <DependentUpon>musteribilgilerim.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="personelAnasayfa.resx">
       <DependentUpon>personelAnasayfa.cs</DependentUpon>

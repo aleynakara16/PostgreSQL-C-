@@ -14,6 +14,8 @@ namespace kitapSiparis
 {
     public partial class KitapIslemleri : Form
     {
+        NpgsqlConnection baglanti = new NpgsqlConnection("server=localHost; port=5432; Database=vtysodev ;user ID=postgres ; password=0609");
+
         void Listele()
         {
             string sorgu = "select * from view_kitap order by kitap_id ASC";
@@ -22,11 +24,11 @@ namespace kitapSiparis
             da.Fill(ds);
             dataGridView1.DataSource = ds.Tables[0];
         }
+
         public KitapIslemleri()
         {
             InitializeComponent();
         }
-        NpgsqlConnection baglanti = new NpgsqlConnection("server=localHost; port=5432; Database=vtysodev ;user ID=postgres ; password=0609");
         private void KitapIslemleri_Load(object sender, EventArgs e)
         { // combobox1 e kategoriler eklendi
             {
@@ -97,28 +99,30 @@ namespace kitapSiparis
 
         private void ekle_Click(object sender, EventArgs e)
         {
-            if (K_Adi.Text == String.Empty || K_Id.Text == String.Empty || afiyatt.Text == String.Empty || sfiyatt.Text == String.Empty ||comboBox1.SelectedIndex==0
+            if (K_Adi.Text == String.Empty || afiyatt.Text == String.Empty ||comboBox1.SelectedIndex==0 || kdv.Text == string.Empty
                 || comboBox2.SelectedIndex==0 || comboBox3.SelectedIndex == 0 || comboBox4.SelectedIndex == 0 || comboBox5.SelectedIndex == 0)
             {
                 MessageBox.Show("Boş alan bırakılamaz !", "UYARI", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
-
             else
             {
                 baglanti.Open();
-                NpgsqlCommand komut1 = new NpgsqlCommand("insert into kitaplar(kitap_id,kitap_ad,yazar,alis_fiyat,stok,magaza,tedarikci,katagori,dil,satis_fiyat) values (@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10)", baglanti);
-                komut1.Parameters.AddWithValue("@p1", int.Parse(K_Id.Text));
+                NpgsqlCommand komut1 = new NpgsqlCommand("insert into kitaplar(kitap_id,kitap_ad,yazar,alis_fiyat,stok,magaza,tedarikci,katagori,dil,satis_fiyat,kdv) values (@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,kdvlifiyat(@p4,@p10),@p11)", baglanti);
+               komut1.Parameters.AddWithValue("@p1", int.Parse(K_Id.Text));
                 komut1.Parameters.AddWithValue("@p2", K_Adi.Text);
                 komut1.Parameters.AddWithValue("@p3", int.Parse(comboBox3.SelectedValue.ToString()));
                 komut1.Parameters.AddWithValue("@p4", double.Parse(afiyatt.Text));
-                komut1.Parameters.AddWithValue("@p10", double.Parse(sfiyatt.Text));
+                komut1.Parameters.AddWithValue("@p10",(double.Parse(kdv.Text))/100);
+                komut1.Parameters.AddWithValue("@p11", double.Parse(kdv.Text));
                 komut1.Parameters.AddWithValue("@p5", int.Parse(stok.Value.ToString()));
                 komut1.Parameters.AddWithValue("@p6", int.Parse(comboBox4.SelectedValue.ToString()));
                 komut1.Parameters.AddWithValue("@p7", int.Parse(comboBox5.SelectedValue.ToString()));
                 komut1.Parameters.AddWithValue("@p8", int.Parse(comboBox1.SelectedValue.ToString()));
                 komut1.Parameters.AddWithValue("@p9", int.Parse(comboBox2.SelectedValue.ToString()));
                 komut1.ExecuteNonQuery();
+
+                double sfiyat= double.Parse(afiyatt.Text) + ((double.Parse(kdv.Text))/100)* (double.Parse(afiyatt.Text));
 
                 baglanti.Close();
                 MessageBox.Show("KİTAP KAYDI BAŞARILI BİR ŞEKİLDE GERÇEKLEŞTİ", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -140,6 +144,7 @@ namespace kitapSiparis
 
                 Listele();
             }
+         
         }
 
         private void sil_Click(object sender, EventArgs e)
@@ -161,9 +166,10 @@ namespace kitapSiparis
                 komut3.ExecuteNonQuery();
                 komut2.ExecuteNonQuery();
                 baglanti.Close();
-                Listele();    
+                Listele();
+
                 }
-            else{ }
+                else { }
             }
         }
 
@@ -175,17 +181,19 @@ namespace kitapSiparis
             else
             {
                 baglanti.Open();
-                NpgsqlCommand komut3 = new NpgsqlCommand("update kitaplar set kitap_ad=@p2,yazar=@p3,alis_fiyat=@p4,stok=@p5,magaza=@p6,tedarikci=@p7,katagori=@p8,dil=@p9,satis_fiyat=@p10 where kitap_id=@p1", baglanti);
+                NpgsqlCommand komut3 = new NpgsqlCommand("update kitaplar set kitap_ad=@p2,yazar=@p3,alis_fiyat=@p4,stok=@p5,magaza=@p6,tedarikci=@p7,katagori=@p8,dil=@p9,kdv=@p11,satis_fiyat=kdvlifiyat(@p4,@p10) where kitap_id=@p1", baglanti);
                 komut3.Parameters.AddWithValue("@p1", int.Parse(K_Id.Text));
                 komut3.Parameters.AddWithValue("@p2", K_Adi.Text);
                 komut3.Parameters.AddWithValue("@p3", int.Parse(comboBox3.SelectedValue.ToString()));
                 komut3.Parameters.AddWithValue("@p4", double.Parse(afiyatt.Text));
-                komut3.Parameters.AddWithValue("@p10", double.Parse(sfiyatt.Text));
-                komut3.Parameters.AddWithValue("@p5", int.Parse(stok.Value.ToString()));
                 komut3.Parameters.AddWithValue("@p6", int.Parse(comboBox4.SelectedValue.ToString()));
                 komut3.Parameters.AddWithValue("@p7", int.Parse(comboBox5.SelectedValue.ToString()));
                 komut3.Parameters.AddWithValue("@p8", int.Parse(comboBox1.SelectedValue.ToString()));
                 komut3.Parameters.AddWithValue("@p9", int.Parse(comboBox2.SelectedValue.ToString()));
+                komut3.Parameters.AddWithValue("@p5", int.Parse(stok.Value.ToString()));
+                komut3.Parameters.AddWithValue("@p10", (double.Parse(kdv.Text)) / 100);
+                komut3.Parameters.AddWithValue("@p11", double.Parse(kdv.Text));
+
                 komut3.ExecuteNonQuery();
                 baglanti.Close();
                 MessageBox.Show("KİTAP BİLGİLERİ BAŞARILI BİR ŞEK,LDE GÜNCELLENDİ", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -229,14 +237,13 @@ namespace kitapSiparis
             K_Id.Text = dataGridView1.CurrentRow.Cells[0].Value.ToString();
             K_Adi.Text = dataGridView1.CurrentRow.Cells[1].Value.ToString();
             afiyatt.Text =dataGridView1.CurrentRow.Cells[3].Value.ToString();
-            sfiyatt.Text = dataGridView1.CurrentRow.Cells[4].Value.ToString();
             stok.Text = dataGridView1.CurrentRow.Cells[5].Value.ToString();
-            
-            comboBox1.Text = dataGridView1.CurrentRow.Cells[8].Value.ToString(); ;
-            comboBox2.Text = dataGridView1.CurrentRow.Cells[9].Value.ToString();
+            kdv.Text= dataGridView1.CurrentRow.Cells[6].Value.ToString();
+            comboBox1.Text = dataGridView1.CurrentRow.Cells[9].Value.ToString(); 
+            comboBox2.Text = dataGridView1.CurrentRow.Cells[10].Value.ToString();
             comboBox3.Text = dataGridView1.CurrentRow.Cells[2].Value.ToString();
-            comboBox4.Text = dataGridView1.CurrentRow.Cells[6].Value.ToString();
-            comboBox5.Text = dataGridView1.CurrentRow.Cells[7].Value.ToString();
+            comboBox4.Text = dataGridView1.CurrentRow.Cells[7].Value.ToString();
+            comboBox5.Text = dataGridView1.CurrentRow.Cells[8].Value.ToString();
 
         }
 
@@ -250,6 +257,33 @@ namespace kitapSiparis
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void sfiyatt_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void silinenkitaplar_Click(object sender, EventArgs e)
+        {
+            baglanti.Open();
+            string komut5 = "select * from silinenkitaplar";
+            NpgsqlDataAdapter da = new NpgsqlDataAdapter(komut5, baglanti);
+            DataSet ds = new DataSet();
+            da.Fill(ds);
+            dataGridView1.DataSource = ds.Tables[0];
+            baglanti.Close();
+        }
+
+        private void degisiklikler_Click(object sender, EventArgs e)
+        {
+            baglanti.Open();
+            string komut5 = "select * from kitap_degisiklikleri";
+            NpgsqlDataAdapter da = new NpgsqlDataAdapter(komut5, baglanti);
+            DataSet ds = new DataSet();
+            da.Fill(ds);
+            dataGridView1.DataSource = ds.Tables[0];
+            baglanti.Close();
         }
     }
 }

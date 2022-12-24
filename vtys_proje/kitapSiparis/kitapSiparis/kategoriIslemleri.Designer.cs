@@ -35,7 +35,6 @@ namespace kitapSiparis
             this.kategoriAdi = new System.Windows.Forms.Label();
             this.K_Id = new System.Windows.Forms.TextBox();
             this.K_Adi = new System.Windows.Forms.TextBox();
-            this.guncelle = new System.Windows.Forms.Button();
             this.ara = new System.Windows.Forms.Button();
             this.listele = new System.Windows.Forms.Button();
             this.sil = new System.Windows.Forms.Button();
@@ -89,25 +88,6 @@ namespace kitapSiparis
             this.K_Adi.Name = "K_Adi";
             this.K_Adi.Size = new System.Drawing.Size(138, 13);
             this.K_Adi.TabIndex = 5;
-            // 
-            // guncelle
-            // 
-            this.guncelle.BackColor = System.Drawing.Color.DarkGreen;
-            this.guncelle.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.guncelle.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.guncelle.FlatAppearance.BorderColor = System.Drawing.Color.Green;
-            this.guncelle.FlatAppearance.BorderSize = 0;
-            this.guncelle.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Green;
-            this.guncelle.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.guncelle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.guncelle.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.guncelle.Location = new System.Drawing.Point(22, 338);
-            this.guncelle.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.guncelle.Name = "guncelle";
-            this.guncelle.Size = new System.Drawing.Size(208, 24);
-            this.guncelle.TabIndex = 68;
-            this.guncelle.Text = "GÜNCELLE";
-            this.guncelle.UseVisualStyleBackColor = false;
             // 
             // ara
             // 
@@ -221,7 +201,6 @@ namespace kitapSiparis
             this.ClientSize = new System.Drawing.Size(806, 375);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.guncelle);
             this.Controls.Add(this.ara);
             this.Controls.Add(this.listele);
             this.Controls.Add(this.sil);
@@ -247,7 +226,6 @@ namespace kitapSiparis
         private System.Windows.Forms.Label kategoriAdi;
         private System.Windows.Forms.TextBox K_Id;
         private System.Windows.Forms.TextBox K_Adi;
-        private System.Windows.Forms.Button guncelle;
         private System.Windows.Forms.Button ara;
         private System.Windows.Forms.Button listele;
         private System.Windows.Forms.Button sil;

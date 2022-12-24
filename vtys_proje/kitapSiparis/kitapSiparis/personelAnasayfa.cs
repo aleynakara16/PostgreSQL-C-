@@ -84,5 +84,12 @@ namespace kitapSiparis
             ss.Show();
             this.Hide();
         }
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+            login aa = new login();
+            this.Close();
+            aa.Show();
+        }
     }
 }
